@@ -4,7 +4,6 @@
 void ofApp::setup(){
     
     // setup librealsense
-    ofxLibRealSense::init();
     _realsense.setupDevice(0);
     _realsense.setupColor(640, 480, 60);
     _realsense.setupDepth(640, 480);

@@ -14,7 +14,7 @@
 class ofxLibRealSense : public ofThread
 {
 public:
-    static void init();
+    static int getDeviceCount();
     
     ofxLibRealSense() : _hasNewColor(false), _hasNewIr(false), _hasNewDepth(false){}
     
@@ -38,6 +38,8 @@ public:
 private:
     static bool             _initialized;
     static rs::context     *_ctx;
+    
+    static void init();
     
     rs::device      *_device;
     uint8_t         *_colBuff;

@@ -24,12 +24,16 @@ void ofxLibRealSense::init()
 }
 
 
+int ofxLibRealSense::getDeviceCount()
+{
+    if(!_initialized) init();
+    return _ctx->get_device_count();
+}
+
+
 void ofxLibRealSense::setupDevice(int deviceID)
 {
-    if(!_initialized) {
-        ofLog(OF_LOG_ERROR, "you have to call ofxLibRealSence::init() before you setup device");
-        return;
-    }
+    if(!_initialized) init();
     
     _device = _ctx->get_device(deviceID);
     cout << _device->get_name() << endl;
@@ -168,6 +172,7 @@ void ofxLibRealSense::update()
 void ofxLibRealSense::exit()
 {
     stopThread();
+    
     _device->stop();
     
     if(_device->is_stream_enabled(rs::stream::color))
@@ -177,5 +182,5 @@ void ofxLibRealSense::exit()
     if(_device->is_stream_enabled(rs::stream::infrared))
        _device->disable_stream(rs::stream::infrared);
     
-    delete _ctx;
+//    delete _ctx;
 }
