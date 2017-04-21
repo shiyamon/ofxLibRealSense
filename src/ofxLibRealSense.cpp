@@ -182,5 +182,7 @@ void ofxLibRealSense::exit()
     if(_device->is_stream_enabled(rs::stream::infrared))
        _device->disable_stream(rs::stream::infrared);
     
+    cout << "librealsense device stopped." << endl;
+    
 //    delete _ctx;
 }

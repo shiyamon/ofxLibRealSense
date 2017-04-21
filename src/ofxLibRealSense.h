@@ -34,6 +34,10 @@ public:
     ofTexture*  getIrTex() { return &_irTex; }
     ofTexture*  getDepthTex() { return &_depthTex; }
     
+    uint8_t*    getColorBuffer() { return _colBuff; }
+    uint8_t*    getIrBuffer() { return _irBuff; }
+    uint16_t*    getDepthBuffer() { return _depthBuff; }
+    
     
 private:
     static bool             _initialized;
