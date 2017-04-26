@@ -152,6 +152,8 @@ void ofxLibRealSense::update()
 {
     if(!_initialized) return;
     
+    _hasNewFrame = _hasNewColor | _hasNewIr | _hasNewDepth;
+    
     if(_depthBuff && _hasNewDepth) {
         _depthTex.loadData(_depthBuff, _depthWidth, _depthHeight, GL_LUMINANCE);
         _hasNewDepth = false;

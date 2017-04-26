@@ -16,7 +16,7 @@ class ofxLibRealSense : public ofThread
 public:
     static int getDeviceCount();
     
-    ofxLibRealSense() : _hasNewColor(false), _hasNewIr(false), _hasNewDepth(false){}
+    ofxLibRealSense() : _hasNewColor(false), _hasNewIr(false), _hasNewDepth(false), _hasNewFrame(false){}
     
     ~ofxLibRealSense(){}
     
@@ -36,7 +36,18 @@ public:
     
     uint8_t*    getColorBuffer() { return _colBuff; }
     uint8_t*    getIrBuffer() { return _irBuff; }
-    uint16_t*    getDepthBuffer() { return _depthBuff; }
+    uint16_t*   getDepthBuffer() { return _depthBuff; }
+    
+    bool isFrameNew() {
+        return _hasNewFrame;
+    }
+    
+    int getColorWidth() { return _colorWidth; }
+    int getColorHeight(){ return _colorHeight; }
+    int getIrWidth()    { return _irWidth; }
+    int getIrHeight()   { return _irHeight; }
+    int getDepthWidth() { return _depthWidth; }
+    int getDepthHeight(){ return _depthHeight; }
     
     
 private:
@@ -50,6 +61,7 @@ private:
     uint8_t         *_irBuff;    
     uint16_t        *_depthBuff;
     
+    bool            _hasNewFrame;
     bool            _hasNewColor;
     bool            _hasNewIr;
     bool            _hasNewDepth;
