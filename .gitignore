@@ -89,6 +89,7 @@ gradlew.bat
 Thumbs.db
 # Folder config file
 Desktop.ini
+*.db
 
 # Android
 .csettings
@@ -102,3 +103,5 @@ Desktop.ini
 #########################
 
 .mailmap
+
+**/bin/*

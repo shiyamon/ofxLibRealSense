@@ -1,0 +1,129 @@
+<?xml version="1.0"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+	<ItemGroup>
+		<ClCompile Include="src\ofApp.cpp">
+			<Filter>src</Filter>
+		</ClCompile>
+		<ClCompile Include="src\main.cpp">
+			<Filter>src</Filter>
+		</ClCompile>
+		<ClCompile Include="src\main.cpp">
+			<Filter>src</Filter>
+		</ClCompile>
+		<ClCompile Include="src\ofApp.cpp">
+			<Filter>src</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\..\addons\ofxGui\src\ofxBaseGui.cpp">
+			<Filter>addons\ofxGui\src</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\..\addons\ofxGui\src\ofxButton.cpp">
+			<Filter>addons\ofxGui\src</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\..\addons\ofxGui\src\ofxGuiGroup.cpp">
+			<Filter>addons\ofxGui\src</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\..\addons\ofxGui\src\ofxLabel.cpp">
+			<Filter>addons\ofxGui\src</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\..\addons\ofxGui\src\ofxPanel.cpp">
+			<Filter>addons\ofxGui\src</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\..\addons\ofxGui\src\ofxSlider.cpp">
+			<Filter>addons\ofxGui\src</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\..\addons\ofxGui\src\ofxSliderGroup.cpp">
+			<Filter>addons\ofxGui\src</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\..\addons\ofxGui\src\ofxToggle.cpp">
+			<Filter>addons\ofxGui\src</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\..\addons\ofxLibRealSense\src\ofxLibRealSense.cpp">
+			<Filter>addons\ofxLibRealSense\src</Filter>
+		</ClCompile>
+	</ItemGroup>
+	<ItemGroup>
+		<Filter Include="src">
+			<UniqueIdentifier>{d8376475-7454-4a24-b08a-aac121d3ad6f}</UniqueIdentifier>
+		</Filter>
+		<Filter Include="addons">
+			<UniqueIdentifier>{71834F65-F3A9-211E-73B8-DC85}</UniqueIdentifier>
+		</Filter>
+		<Filter Include="addons\ofxGui">
+			<UniqueIdentifier>{4F2A59AF-5F4E-704B-D067-EC13}</UniqueIdentifier>
+		</Filter>
+		<Filter Include="addons\ofxGui\src">
+			<UniqueIdentifier>{645E9533-4DCD-6179-1CDF-CB65}</UniqueIdentifier>
+		</Filter>
+		<Filter Include="addons\ofxLibRealSense">
+			<UniqueIdentifier>{00F48526-F28D-77E7-AF52-2247}</UniqueIdentifier>
+		</Filter>
+		<Filter Include="addons\ofxLibRealSense\src">
+			<UniqueIdentifier>{DA56EA53-F42F-964D-F5F4-67BB}</UniqueIdentifier>
+		</Filter>
+		<Filter Include="addons\ofxLibRealSense\libs">
+			<UniqueIdentifier>{00F1A077-A151-952C-69F3-8744}</UniqueIdentifier>
+		</Filter>
+		<Filter Include="addons\ofxLibRealSense\libs\librealsense">
+			<UniqueIdentifier>{BADFF87B-2528-639C-5EEE-132D}</UniqueIdentifier>
+		</Filter>
+		<Filter Include="addons\ofxLibRealSense\libs\librealsense\include">
+			<UniqueIdentifier>{91CAE882-E9BE-3FF9-3D8B-AB57}</UniqueIdentifier>
+		</Filter>
+		<Filter Include="addons\ofxLibRealSense\libs\librealsense\include\librealsense">
+			<UniqueIdentifier>{3B56070F-2D16-78F3-CC53-0F3F}</UniqueIdentifier>
+		</Filter>
+	</ItemGroup>
+	<ItemGroup>
+		<ClInclude Include="src\ofApp.h">
+			<Filter>src</Filter>
+		</ClInclude>
+		<ClInclude Include="src\ofApp.h">
+			<Filter>src</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\..\addons\ofxGui\src\ofxBaseGui.h">
+			<Filter>addons\ofxGui\src</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\..\addons\ofxGui\src\ofxButton.h">
+			<Filter>addons\ofxGui\src</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\..\addons\ofxGui\src\ofxGui.h">
+			<Filter>addons\ofxGui\src</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\..\addons\ofxGui\src\ofxGuiGroup.h">
+			<Filter>addons\ofxGui\src</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\..\addons\ofxGui\src\ofxLabel.h">
+			<Filter>addons\ofxGui\src</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\..\addons\ofxGui\src\ofxPanel.h">
+			<Filter>addons\ofxGui\src</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\..\addons\ofxGui\src\ofxSlider.h">
+			<Filter>addons\ofxGui\src</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\..\addons\ofxGui\src\ofxSliderGroup.h">
+			<Filter>addons\ofxGui\src</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\..\addons\ofxGui\src\ofxToggle.h">
+			<Filter>addons\ofxGui\src</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\..\addons\ofxLibRealSense\src\ofxLibRealSense.h">
+			<Filter>addons\ofxLibRealSense\src</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\..\addons\ofxLibRealSense\libs\librealsense\include\librealsense\rs.h">
+			<Filter>addons\ofxLibRealSense\libs\librealsense\include\librealsense</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\..\addons\ofxLibRealSense\libs\librealsense\include\librealsense\rs.hpp">
+			<Filter>addons\ofxLibRealSense\libs\librealsense\include\librealsense</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\..\addons\ofxLibRealSense\libs\librealsense\include\librealsense\rscore.hpp">
+			<Filter>addons\ofxLibRealSense\libs\librealsense\include\librealsense</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\..\addons\ofxLibRealSense\libs\librealsense\include\librealsense\rsutil.h">
+			<Filter>addons\ofxLibRealSense\libs\librealsense\include\librealsense</Filter>
+		</ClInclude>
+	</ItemGroup>
+	<ItemGroup>
+		<ResourceCompile Include="icon.rc" />
+	</ItemGroup>
+</Project>
