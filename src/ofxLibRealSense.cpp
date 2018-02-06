@@ -35,6 +35,11 @@ void ofxLibRealSense::setupDevice(int deviceID)
 {
     if(!_initialized) init();
     
+    if(_ctx->get_device_count() <= 0) {
+        ofSystemAlertDialog("RealSense device not found!");
+        std::exit(0);
+    }
+    
     _device = _ctx->get_device(deviceID);
     cout << _device->get_name() << endl;
 }
@@ -118,6 +123,12 @@ void ofxLibRealSense::setR200IROptions(bool autoExposure, bool emitter, float ga
 }
 
 
+void ofxLibRealSense::setSR300Options(int laserPower)
+{
+    _device->set_option(rs::option::f200_laser_power, laserPower);
+}
+
+
 void ofxLibRealSense::threadedFunction()
 {
     while(isThreadRunning()) {
@@ -176,7 +187,6 @@ void ofxLibRealSense::exit()
     stopThread();
     
     _device->stop();
-    
     if(_device->is_stream_enabled(rs::stream::color))
         _device->disable_stream(rs::stream::color);
     if(_device->is_stream_enabled(rs::stream::depth))
@@ -186,5 +196,5 @@ void ofxLibRealSense::exit()
     
     cout << "librealsense device stopped." << endl;
     
-//    delete _ctx;
+    delete _ctx;
 }

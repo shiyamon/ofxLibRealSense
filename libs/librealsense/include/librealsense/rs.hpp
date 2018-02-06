@@ -1,10 +1,6 @@
 // License: Apache 2.0. See LICENSE file in root directory.
 // Copyright(c) 2015 Intel Corporation. All Rights Reserved.
 
-///  \file rs.hpp
-///  \brief
-///  Exposes librealsense functionality for C++ compilers
-
 #ifndef LIBREALSENSE_RS_HPP
 #define LIBREALSENSE_RS_HPP
 
@@ -20,7 +16,7 @@
 
 namespace rs
 {
-    /// \brief Streams are different types of data provided by RealSense devices
+    /* streams are different types of data provided by RealSense devices */
     enum class stream : int32_t
     {
         depth                           ,  /**< Native stream of depth data produced by RealSense device */
@@ -37,19 +33,19 @@ namespace rs
         depth_aligned_to_infrared2         /**< Synthetic stream containing depth data but sharing intrinsic of second viewpoint infrared stream */
     };
 
-    ///  \brief Formats: defines how each stream can be encoded.
-    ///    \c rs_format specifies how a frame is represented in memory (similar to the V4L pixel format).
+    /*  formats define how each stream can be encoded
+        format is closely relateed to Linux pixel-formats, but is trying to abstract away the platform specific constructs */
     enum class format : int32_t
     {
         any         ,  /**< When passed to enable stream, librealsense will try to provide best suited format */
-        z16         ,  /**< 16 bit linear depth values. The depth is meters is equal to depth scale * pixel value. */
-        disparity16 ,  /**< 16 bit linear disparity values. The depth in meters is equal to depth scale / pixel value. */
+        z16         ,  /**< 16 bit linear depth values. The depth is meters is equal to depth scale * pixel value */
+        disparity16 ,  /**< 16 bit linear disparity values. The depth in meters is equal to depth scale / pixel value */
         xyz32f      ,  /**< 32 bit floating point 3D coordinates. */
         yuyv        ,  /**< Standard YUV pixel format as described in https://en.wikipedia.org/wiki/YUV */
-        rgb8        ,  /**< 8-bit red, green, and blue channels */
-        bgr8        ,  /**< 8-bit blue, green, and red channels channels -- suitable for OpenCV */
-        rgba8       ,  /**< 8-bit red, green, and blue channels + constant alpha channel equal to FF */
-        bgra8       ,  /**< 8-bit blue, green, and red channels + constant alpha channel equal to FF */
+        rgb8        ,  /**< 8-bit Red, Green and Blue channels */
+        bgr8        ,  /**< 8-bit Blue, Green and Red channels, suitable for OpenCV */
+        rgba8       ,  /**< 8-bit Red, Green, Blue channels + constant alpha channel equal to FF */
+        bgra8       ,  /**< 8-bit Blue, Green, Red channels + constant alpha channel equal to FF */
         y8          ,  /**< 8-bit per-pixel grayscale image */
         y16         ,  /**< 16-bit per-pixel grayscale image */
         raw10       ,  /**< Four 10-bit luminance values encoded into a 5-byte macropixel */
@@ -57,188 +53,183 @@ namespace rs
         raw8           /**< 8-bit raw image */
     };
 
-    /// \brief Output buffer format: sets how librealsense works with frame memory.
+    /* Output buffer format sets how librealsense will work with frame memory */
     enum class output_buffer_format : int32_t
     {
         continous      , /**< Makes sure that the output frame is exposed as a single continuous buffer */
-        native           /**< Does not convert buffer to continuous. The user has to handle pitch manually. */
+        native           /**< Don't convert buffer to continuous, the user has to handle pitch manually */
     };
 
-    /// \brief Presets: general preferences that are translated by librealsense into concrete resolution and FPS.
+    /* Presets hint general preference that is translated by librealsense into concrete resultion and fps */
     enum class preset : int32_t
     {
         best_quality     ,/**< Prefer best overall quality */
         largest_image    ,/**< Prefer largest image size */
-        highest_framerate /**< Prefer highest frame rate */
+        highest_framerate /**< Prefer highest framerate */
     };
 
-    /// \brief Distortion model: defines how pixel coordinates should be mapped to sensor coordinates.
+    /* Distortion model define how pixel coordinates should be mapped to sensor coordinates */
     enum class distortion : int32_t
     {
-        none                  , /**< Rectilinear images. No distortion compensation required. */
+        none                  , /**< Rectilinear images, no distortion compensation required */
         modified_brown_conrady, /**< Equivalent to Brown-Conrady distortion, except that tangential distortion is applied to radially distorted points */
         inverse_brown_conrady,  /**< Equivalent to Brown-Conrady distortion, except undistorts image instead of distorting it */
         distortion_ftheta       /**< Distortion model of the fish-eye camera */
     };
 
-  /// \brief Defines general configuration controls. 
-  ///
-  /// These can generally be mapped to camera UVC controls, and unless stated otherwise, can be set/queried at any time.
+    /* Camera options define general configuration controls.
+    These can generally be mapped to camera UVC controls, and unless stated otherwise can be set/queried at any time */
     enum class option : int32_t
     {
-        color_backlight_compensation                    ,  /**< Enable/disable color backlight compensation*/
+        color_backlight_compensation                    ,  /**< Enable / disable color backlight compensation*/
         color_brightness                                ,  /**< Color image brightness*/
         color_contrast                                  ,  /**< Color image contrast*/
-        color_exposure                                  ,  /**< Controls exposure time of color camera. Setting any value will disable auto exposure.*/
+        color_exposure                                  ,  /**< Controls exposure time of color camera. Setting any value will disable auto exposure*/
         color_gain                                      ,  /**< Color image gain*/
         color_gamma                                     ,  /**< Color image gamma setting*/
         color_hue                                       ,  /**< Color image hue*/
         color_saturation                                ,  /**< Color image saturation setting*/
         color_sharpness                                 ,  /**< Color image sharpness setting*/
-        color_white_balance                             ,  /**< Controls white balance of color image. Setting any value will disable auto white balance.*/
-        color_enable_auto_exposure                      ,  /**< Enable/disable color image auto-exposure*/
-        color_enable_auto_white_balance                 ,  /**< Enable/disable color image auto-white-balance*/
-        f200_laser_power                                , /**< Power of the F200/SR300 projector, with 0 meaning projector off*/
-        f200_accuracy                                   , /**< Set the number of patterns projected per frame. The higher the accuracy value, the more patterns projected. Increasing the number of patterns helps to achieve better accuracy. Note that this control affects the depth FPS.  */
-        f200_motion_range                               , /**< Motion vs. range trade-off, with lower values allowing for better motion sensitivity and higher values allowing for better depth range*/
-        f200_filter_option                              , /**< Set the filter to apply to each depth frame. Each one of the filters is optimized per the application requirements.*/
-        f200_confidence_threshold                       , /**< Confidence level threshold used by the depth algorithm pipe to set whether a pixel will get a valid range or will be marked with invalid range*/
-        f200_dynamic_fps                                , /**< (F200-only) Allows to reduce FPS without restarting streaming. Valid values are {2, 5, 15, 30, 60}.*/
-        sr300_auto_range_enable_motion_versus_range     , /**< Configures SR300 depth auto-range setting. Should not be used directly but through the \c rs_apply_ivcam_preset method in rsutil.h.*/
-        sr300_auto_range_enable_laser                   , /**< Configures SR300 depth auto-range setting. Should not be used directly but through the \c rs_apply_ivcam_preset method in rsutil.h.*/
-        sr300_auto_range_min_motion_versus_range        , /**< Configures SR300 depth auto-range setting. Should not be used directly but through the \c rs_apply_ivcam_preset method in rsutil.h.*/
-        sr300_auto_range_max_motion_versus_range        , /**< Configures SR300 depth auto-range setting. Should not be used directly but through the \c rs_apply_ivcam_preset method in rsutil.h.*/
-        sr300_auto_range_start_motion_versus_range      , /**< Configures SR300 depth auto-range setting. Should not be used directly but through the \c rs_apply_ivcam_preset method in rsutil.h.*/
-        sr300_auto_range_min_laser                      , /**< Configures SR300 depth auto-range setting. Should not be used directly but through the \c rs_apply_ivcam_preset method in rsutil.h.*/
-        sr300_auto_range_max_laser                      , /**< Configures SR300 depth auto-range setting. Should not be used directly but through the \c rs_apply_ivcam_preset method in rsutil.h.*/
-        sr300_auto_range_start_laser                    , /**< Configures SR300 depth auto-range setting. Should not be used directly but through the \c rs_apply_ivcam_preset method in rsutil.h.*/
-        sr300_auto_range_upper_threshold                , /**< Configures SR300 depth auto-range setting. Should not be used directly but through the \c rs_apply_ivcam_preset method in rsutil.h.*/
-        sr300_auto_range_lower_threshold                , /**< Configures SR300 depth auto-range setting. Should not be used directly but through the \c rs_apply_ivcam_preset method in rsutil.h.*/
-        r200_lr_auto_exposure_enabled                   , /**< Enable/disable R200 auto-exposure. This will affect both IR and depth images.*/
+        color_white_balance                             ,  /**< Controls white balance of color image. Setting any value will disable auto white balance*/
+        color_enable_auto_exposure                      , /**< Enable / disable color image auto-exposure*/
+        color_enable_auto_white_balance                 , /**< Enable / disable color image auto-white-balance*/
+        f200_laser_power                                , /**< Power of the F200 / SR300 projector, with 0 meaning projector off*/
+        f200_accuracy                                   , /**< Set the number of patterns projected per frame. The higher the accuracy value the more patterns projected. Increasing the number of patterns help to achieve better accuracy. Note that this control is affecting the Depth FPS */
+        f200_motion_range                               , /**< Motion vs. Range trade-off, with lower values allowing for better motion sensitivity and higher values allowing for better depth range*/
+        f200_filter_option                              , /**< Set the filter to apply to each depth frame. Each one of the filter is optimized per the application requirements*/
+        f200_confidence_threshold                       , /**< The confidence level threshold used by the Depth algorithm pipe to set whether a pixel will get a valid range or will be marked with invalid range*/
+        f200_dynamic_fps                                , /**< (F200-only) Allows to reduce FPS without restarting streaming. Valid values are {2, 5, 15, 30, 60}*/
+        sr300_auto_range_enable_motion_versus_range     , /**< Configures SR300 Depth Auto-Range setting. Should not be used directly but through set IVCAM preset method*/
+        sr300_auto_range_enable_laser                   , /**< Configures SR300 Depth Auto-Range setting. Should not be used directly but through set IVCAM preset method*/
+        sr300_auto_range_min_motion_versus_range        , /**< Configures SR300 Depth Auto-Range setting. Should not be used directly but through set IVCAM preset method*/
+        sr300_auto_range_max_motion_versus_range        , /**< Configures SR300 Depth Auto-Range setting. Should not be used directly but through set IVCAM preset method*/
+        sr300_auto_range_start_motion_versus_range      , /**< Configures SR300 Depth Auto-Range setting. Should not be used directly but through set IVCAM preset method*/
+        sr300_auto_range_min_laser                      , /**< Configures SR300 Depth Auto-Range setting. Should not be used directly but through set IVCAM preset method*/
+        sr300_auto_range_max_laser                      , /**< Configures SR300 Depth Auto-Range setting. Should not be used directly but through set IVCAM preset method*/
+        sr300_auto_range_start_laser                    , /**< Configures SR300 Depth Auto-Range setting. Should not be used directly but through set IVCAM preset method*/
+        sr300_auto_range_upper_threshold                , /**< Configures SR300 Depth Auto-Range setting. Should not be used directly but through set IVCAM preset method*/
+        sr300_auto_range_lower_threshold                , /**< Configures SR300 Depth Auto-Range setting. Should not be used directly but through set IVCAM preset method*/
+        r200_lr_auto_exposure_enabled                   , /**< Enables / disables R200 auto-exposure. This will affect both IR and depth image.*/
         r200_lr_gain                                    , /**< IR image gain*/
-        r200_lr_exposure                                , /**< This control allows manual adjustment of the exposure time value for the L/R imagers.*/
-        r200_emitter_enabled                            , /**< Enables/disables R200 emitter*/
-        r200_depth_units                                , /**< Micrometers per increment in integer depth values. 1000 is default (mm scale). Set before streaming.*/
-        r200_depth_clamp_min                            , /**< Minimum depth in current depth units that will be output. Any values less than "Min Depth" will be mapped to 0 during the conversion between disparity and depth. Set before streaming.*/
-        r200_depth_clamp_max                            , /**< Minimum depth in current depth units that will be output. Any values less than "Max Depth" will be mapped to 0 during the conversion between disparity and depth. Set before streaming.*/
-        r200_disparity_multiplier                       , /**< Disparity scale factor used when in disparity output mode. Can only be set before streaming.*/
-        r200_disparity_shift                            , /**< {0 - 512}. Can only be set before streaming starts.*/
-        r200_auto_exposure_mean_intensity_set_point     , /**< Mean intensity set point. Requires the \c r200_lr_auto_exposure_enabled option to be set to 1.*/
-        r200_auto_exposure_bright_ratio_set_point       , /**< Bright ratio set point. Requires the \c r200_lr_auto_exposure_enabled option to be set to 1.*/
-        r200_auto_exposure_kp_gain                      , /**< Kp gain. Requires the \c r200_lr_auto_exposure_enabled option to be set to 1.*/
-        r200_auto_exposure_kp_exposure                  , /**< Kp exposure. Requires the \c r200_lr_auto_exposure_enabled option to be set to 1.*/
-        r200_auto_exposure_kp_dark_threshold            , /**< Kp dark threshold. Requires the \c r200_lr_auto_exposure_enabled option to be set to 1.*/
-        r200_auto_exposure_top_edge                     , /**< Auto-exposure region-of-interest top edge (in pixels). Requires the \c r200_lr_auto_exposure_enabled option to be set to 1.*/
-        r200_auto_exposure_bottom_edge                  , /**< Auto-exposure region-of-interest bottom edge (in pixels). Requires the \c r200_lr_auto_exposure_enabled option to be set to 1.*/
-        r200_auto_exposure_left_edge                    , /**< Auto-exposure region-of-interest left edge (in pixels). Requires the \c r200_lr_auto_exposure_enabled option to be set to 1.*/
-        r200_auto_exposure_right_edge                   , /**< Auto-exposure region-of-interest right edge (in pixels). Requires the \c r200_lr_auto_exposure_enabled option to be set to 1.*/
+        r200_lr_exposure                                , /**< This control allows manual adjustment of the exposure time value for the L/R imagers*/
+        r200_emitter_enabled                            , /**< Enables / disables R200 emitter*/
+        r200_depth_units                                , /**< Micrometers per increment in integer depth values, 1000 is default (mm scale). Set before streaming*/
+        r200_depth_clamp_min                            , /**< Minimum depth in current depth units that will be output. Any values less than ‘Min Depth’ will be mapped to 0 during the conversion between disparity and depth. Set before streaming*/
+        r200_depth_clamp_max                            , /**< Maximum depth in current depth units that will be output. Any values greater than ‘Max Depth’ will be mapped to 0 during the conversion between disparity and depth. Set before streaming*/
+        r200_disparity_multiplier                       , /**< The disparity scale factor used when in disparity output mode. Can only be set before streaming*/
+        r200_disparity_shift                            , /**< {0 - 512}. Can only be set before streaming starts*/
+        r200_auto_exposure_mean_intensity_set_point     , /**< (Requires LR-Auto-Exposure ON) Mean intensity set point*/
+        r200_auto_exposure_bright_ratio_set_point       , /**< (Requires LR-Auto-Exposure ON) Bright ratio set point*/
+        r200_auto_exposure_kp_gain                      , /**< (Requires LR-Auto-Exposure ON) Kp Gain*/
+        r200_auto_exposure_kp_exposure                  , /**< (Requires LR-Auto-Exposure ON) Kp Exposure*/
+        r200_auto_exposure_kp_dark_threshold            , /**< (Requires LR-Auto-Exposure ON) Kp Dark Threshold*/
+        r200_auto_exposure_top_edge                     , /**< (Requires LR-Auto-Exposure ON) Auto-Exposure region-of-interest top edge (in pixels)*/
+        r200_auto_exposure_bottom_edge                  , /**< (Requires LR-Auto-Exposure ON) Auto-Exposure region-of-interest bottom edge (in pixels)*/
+        r200_auto_exposure_left_edge                    , /**< (Requires LR-Auto-Exposure ON) Auto-Exposure region-of-interest left edge (in pixels)*/
+        r200_auto_exposure_right_edge                   , /**< (Requires LR-Auto-Exposure ON) Auto-Exposure region-of-interest right edge (in pixels)*/
         r200_depth_control_estimate_median_decrement    , /**< Value to subtract when estimating the median of the correlation surface*/
         r200_depth_control_estimate_median_increment    , /**< Value to add when estimating the median of the correlation surface*/
-        r200_depth_control_median_threshold             , /**< Threshold: by how much the winning score exceeds the median. */
-        r200_depth_control_score_minimum_threshold      , /**< Minimum correlation score that is considered acceptable*/
-        r200_depth_control_score_maximum_threshold      , /**< Maximum correlation score that is considered acceptable*/
-        r200_depth_control_texture_count_threshold      , /**< Parameter for determining whether the texture in the region is sufficient to justify a depth result*/
-        r200_depth_control_texture_difference_threshold , /**< Parameter for determining whether the texture in the region is sufficient to justify a depth result*/
-        r200_depth_control_second_peak_threshold        , /**< Threshold: how much the minimum correlation score must differ from the next best score.*/
+        r200_depth_control_median_threshold             , /**< A threshold by how much the winning score must beat the median*/
+        r200_depth_control_score_minimum_threshold      , /**< The minimum correlation score that is considered acceptable*/
+        r200_depth_control_score_maximum_threshold      , /**< The maximum correlation score that is considered acceptable*/
+        r200_depth_control_texture_count_threshold      , /**< A parameter for determining whether the texture in the region is sufficient to justify a depth result*/
+        r200_depth_control_texture_difference_threshold , /**< A parameter for determining whether the texture in the region is sufficient to justify a depth result*/
+        r200_depth_control_second_peak_threshold        , /**< A threshold on how much the minimum correlation score must differ from the next best score*/
         r200_depth_control_neighbor_threshold           , /**< Neighbor threshold value for depth calculation*/
-        r200_depth_control_lr_threshold                 , /**< Left-right threshold value for depth calculation*/
+        r200_depth_control_lr_threshold                 , /**< Left-Right threshold value for depth calculation*/
         fisheye_exposure                                , /**< Fisheye image exposure time in msec*/
         fisheye_gain                                    , /**< Fisheye image gain*/
-        fisheye_strobe                                  , /**< Enable/disable fisheye strobe. When enabled, aligns timestamps to common clock-domain with the motion events.*/
-        fisheye_external_trigger                        , /**< Enable/disable fisheye external trigger mode. When enabled, fisheye image will be aquired in-sync with the depth image.*/
+        fisheye_strobe                                  , /**< Enables / disables fisheye strobe. When enabled this will align timestamps to common clock-domain with the motion events*/
+        fisheye_external_trigger                        , /**< Enables / disables fisheye external trigger mode. When enabled fisheye image will be aquired in-sync with the depth image*/
         fisheye_color_auto_exposure                     , /**< Enable / disable fisheye auto-exposure */
         fisheye_color_auto_exposure_mode                , /**< 0 - static auto-exposure, 1 - anti-flicker auto-exposure, 2 - hybrid */
-        fisheye_color_auto_exposure_rate                , /**< Fisheye auto-exposure anti-flicker rate. Can be 50 or 60 Hz. */
-        fisheye_color_auto_exposure_sample_rate         , /**< In fisheye auto-exposure sample frame, every given number of pixels */
-        fisheye_color_auto_exposure_skip_frames         , /**< In fisheye auto-exposure sample, every given number of frames. */
-        frames_queue_size                               , /**< Number of frames the user is allowed to keep per stream. Trying to hold on to more frames will cause frame-drops.*/
-        hardware_logger_enabled                         , /**< Enable/disable fetching log data from the device */
+        fisheye_color_auto_exposure_rate                , /**< Fisheye auto-exposure anti-flicker rate, can be 50 or 60 Hz */
+        fisheye_color_auto_exposure_sample_rate         , /**< In Fisheye auto-exposure sample frame every given number of pixels */
+        fisheye_color_auto_exposure_skip_frames         , /**< In Fisheye auto-exposure sample every given number of frames */
+        frames_queue_size                               , /**< Number of frames the user is allowed to keep per stream. Trying to hold-on to more frames will cause frame-drops.*/
+        hardware_logger_enabled                         , /**< Enable / disable fetching log data from the device */
         total_frame_drops                               , /**< Total number of detected frame drops from all streams*/
     };
 
-    /// \brief Types of value provided from the device with each frame
+    /* frame metadata enum discriminates between the different types of values provided from the device with each frame */
     enum class frame_metadata
     {
-        actual_exposure, /**< Actual exposure at which the frame was captured */
-        actual_fps       /**< Actual FPS at the time of capture */
+        actual_exposure, /**< actual exposure that the frame was captured with */
+        actual_fps       /**< actual fps at the time of capture */
     };
 
-    /// \brief Specifies various capabilities of a RealSense device.
-    ///
-    /// To check if a certain capability is supported by a particular device, at runtime call <tt>dev->supports(capability)</tt>.
+    /* rs_capabilities defines the full set of functionality that a RealSense device might provide
+    to check what functionality is supported by a particular device at runtime call dev->supports(capability) */
     enum class capabilities : int32_t
     {
-        depth,                      /**< Provides depth stream */
-        color,                      /**< Provides color stream */
-        infrared,                   /**< Provides infrared stream */
-        infrared2,                  /**< Provides second infrared stream */
-        fish_eye,                   /**< Provides wide field of view (fish-eye) stream */
-        motion_events,              /**< Provides gyroscope and accelorometer events */
-        motion_module_fw_update,    /**< Provides method for upgrading motion module firmware */
-        adapter_board,              /**< Internally includes MIPI-to-USB adapter */
-        enumeration,                /**< Provides enough basic functionality to be considered supported. This is to catch various outdated engineering samples at runtime. */
+        depth,                      /**< provides depth stream */
+        color,                      /**< provides color stream */
+        infrared,                   /**< provides infrared stream */
+        infrared2,                  /**< provides second infrared stream */
+        fish_eye,                   /**< provides wide field of view (fish-eye) stream */
+        motion_events,              /**< provides gyro and accelorometer events */
+        motion_module_fw_update,    /**< provides method for upgrading motion module firmware */
+        adapter_board,              /**< interanlly includes MIPI to USB adapter */
+        enumeration,                /**< provides enough basic functionality to be considered supported. this to catch at runtime various outdated engineering samples */
     };
 
-    /// \brief Proprietary formats for direct communication with device firmware
+    /* This type defines proprietary formats for direct communication with device firmware */
     enum class blob_type 
     {
-        motion_module_firmware_update /**< By using this option, new firmware can be uploaded to the ZR300 motion-module  */
+        motion_module_firmware_update /**< By using this option, new firmware can be uploaded to the ZR300 motion-module */
     };
 
-    /// \brief Read-only strings that can be queried from the device.
-    ///
-    /// Not all information fields are available on all camera types.
-    /// This information is mainly available for camera debug and troubleshooting and should not be used in applications.
+    /* Camera Info feilds are read-only strings that can be queried from the device
+       Not all info feilds are available on all camera types
+       This information is mainly available for camera debug and troubleshooting and should not be used in applications */
     enum class camera_info {
         device_name                   , /**< Device friendly name */
         serial_number                 , /**< Device serial number */
         camera_firmware_version       , /**< Primary firmware version */
-        adapter_board_firmware_version, /**< MIPI-to-USB adapter board firmware version if such board is present */
+        adapter_board_firmware_version, /**< MIPI-to-USB Adapter board firmware version if such board is present */
         motion_module_firmware_version, /**< Motion module firmware version if motion module is present */
-        camera_type                   , /**< R200/LR200/ZR300 camera type */
+        camera_type                   , /**< R200 / LR200 / ZR300 camera type */
         oem_id                        , /**< OEM ID */
         isp_fw_version                , /**< ISP firmware version when available */
-        content_version               , /**< R200/LR200/ZR300 content version */
-        module_version                , /**< R200/LR200/ZR300 module version */
+        content_version               , /**< R200 / LR200 / ZR300 content version */
+        module_version                , /**< R200 / LR200 / ZR300 module version */
         imager_model_number           , /**< Primary imager model number */
         build_date                    , /**< Device build date */
         calibration_date              , /**< Primary calibration date */
-        program_date                  , /**< R200/LR200/ZR300 program date */
+        program_date                  , /**< R200 / LR200 / ZR300 Program date */
         focus_alignment_date          , /**< Focus calibration date */
-        emitter_type                  , /**< R200/LR200/ZR300 emitter date */
+        emitter_type                  , /**< R200 / LR200 / ZR300 emitter type */
         focus_value                   , /**< Result of the focus calibration */
         lens_type                     , /**< Primary lens type */
         third_lens_type               , /**< Color imager lens type */
         lens_coating_type             , /**< Lens coating type */
         third_lens_coating_type       , /**< Color coating type */
         lens_nominal_baseline         , /**< Nominal baseline */
-        third_lens_nominal_baseline     /**< Color nominal baseline */
+        third_lens_nominal_baseline     /**< Color Nominal baseline */
     };
 
-    /// \brief Allows the user to choose between available hardware subdevices
+    /* Source allows the user to choose between available hardware subdevices */
     enum class source : uint8_t
     {
-        video      , /**< Video streaming of depth, infrared, color, or fish-eye */
-        motion_data, /**< Motion tracking from gyroscope and accelerometer */
-        all_sources, /**< Enable everything together */
+        video      ,/**< Video streaming of depth, infrared, color or fish-eye */
+        motion_data,/**< Motion tracking from Gyro and Accelerometer */
+        all_sources,/**< Enable everything together */
     };
 
-    /// \brief Source device that triggered specific timestamp event from the motion module
+    /* Source device that tiggered specific timestamp event from the motion module */
     enum class event : uint8_t
     {
         event_imu_accel     , /**< Event from accelerometer */
         event_imu_gyro      , /**< Event from the gyroscope */
-        event_imu_depth_cam , /**< Event from depth camera (depth/IR frame) */
+        event_imu_depth_cam , /**< Event from depth camera (depth / IR frame) */
         event_imu_motion_cam, /**< Event from the fish-eye camera */
         event_imu_g0_sync   , /**< Event from external GPIO 0 */
         event_imu_g1_sync   , /**< Event from external GPIO 1 */
         event_imu_g2_sync     /**< Event from external GPIO 2 */
     };
 
-    /// \brief Specifies the clock in relation to which the frame timestamp was measured.
-
-    /// When working with a motion microcontroller, motion data timestamps are always in the microcontroller timestamp domain. 
-    /// Some frames, however, might not succesfully receive microcontroller timestamp and will be marked as camera domain.
+    /* When working with motion microcontroller, motion data timestamps are always in microcontroller timestamp domain.
+       Some frames, however, might not succesfully receive microcontroller timestamp and will be marked as camera domain */
     enum class timestamp_domain
     {
         camera,         /**< Frame timestamp was measured in relation to the camera clock */
@@ -248,7 +239,7 @@ namespace rs
     struct float2 { float x,y; };
     struct float3 { float x,y,z; };
 
-    /// \brief Video stream intrinsics
+    /* Video stream intrinsics */
     struct intrinsics : rs_intrinsics
     {
         float       hfov() const                                                        { return (atan2f(ppx + 0.5f, fx) + atan2f(width - (ppx + 0.5f), fx)) * 57.2957795f; }
@@ -271,27 +262,27 @@ namespace rs
 
     };
 
-    /// \brief Motion device intrinsics: scale, bias, and variances.
+    /* represents motion device intrinsic - scale, bias and variances */
     struct motion_intrinsics : rs_motion_intrinsics
     {
         motion_intrinsics(){};
     };
 
-    /// \brief Cross-stream extrinsics: encode the topology describing how the different devices are connected.
+    /* Cross-stream extrinsics, encode the topology of how the different devices are connected */
     struct extrinsics : rs_extrinsics
     {
         bool        is_identity() const                                                 { return (rotation[0] == 1) && (rotation[4] == 1) && (translation[0] == 0) && (translation[1] == 0) && (translation[2] == 0); }
         float3      transform(const float3 & point) const                               { float3 p = {}; rs_transform_point_to_point(&p.x, this, &point.x); return p; }
     };
 
-    /// \brief Timestamp data from the motion microcontroller
+    /* Timestamp data from the motion microcontroller */
     struct timestamp_data : rs_timestamp_data
     {
         timestamp_data(rs_timestamp_data orig) : rs_timestamp_data(orig) {}
         timestamp_data() {}
     };
 
-    /// \brief Motion data from gyroscope and accelerometer from the microcontroller
+    /* Motion data from Gyro / Accel from the microcontroller */
     struct motion_data : rs_motion_data
     {
         motion_data(rs_motion_data orig) : rs_motion_data(orig) {}
@@ -315,7 +306,7 @@ namespace rs
         const std::string & get_failed_args() const { return args; }
         static void handle(rs_error * e) { if(e) throw error(e); }
     };
-    /// \brief Context
+
     class context
     {
         rs_context * handle;
@@ -323,7 +314,7 @@ namespace rs
         context & operator = (const context &) = delete;
     public:
 
-        /// \brief Creates RealSense context that is required for the rest of the API
+        // create realsense context required for rest of the API
         context()
         {
             rs_error * e = nullptr;
@@ -338,8 +329,8 @@ namespace rs
             rs_delete_context(handle, nullptr);
         }
 
-        /// Determines number of connected devices
-        /// \return  Device count
+        /// determine number of connected devices
+        /// \return  the count of devices
         int get_device_count() const
         {
             rs_error * e = nullptr;
@@ -348,9 +339,9 @@ namespace rs
             return r;
         }
 
-        /// Retrieves connected device by index
-        /// \param[in] index  Zero-based index of device to retrieve
-        /// \return           Requested device
+        /// retrieve connected device by index
+        /// \param[in] index  the zero based index of device to retrieve
+        /// \return           the requested device
         device * get_device(int index)
         {
             rs_error * e = nullptr;
@@ -388,7 +379,6 @@ namespace rs
         void release() override { delete this; }
     };
 
-    /// \brief Frame
     class frame
     {
         rs_device * device;
@@ -421,8 +411,8 @@ namespace rs
             }
         }
 
-        /// Retrieves time at which frame was captured
-        /// \return            Timestamp of the frame, in milliseconds since the device was started
+        /// retrieve the time at which the frame was captured
+        /// \return            the timestamp of the frame, in milliseconds since the device was started
         double get_timestamp() const
         {
             rs_error * e = nullptr;
@@ -431,8 +421,8 @@ namespace rs
             return r;
         }
 
-        /// Retrieves the timestamp domain 
-        /// \return            Timestamp domain (clock name) for timestamp values
+        /// retrieve the timestamp domain 
+        /// \return            timestamp domain (clock name) for timestamp values
         timestamp_domain get_frame_timestamp_domain() const
         {
             rs_error * e = nullptr;
@@ -441,9 +431,9 @@ namespace rs
             return static_cast<timestamp_domain>(r);
         }
 
-        /// Retrieves the current value of a single frame_metadata
-        /// \param[in] frame_metadata  Frame metadata whose value should be retrieved
-        /// \return                    Value of frame_metadata
+        /// retrieve the current value of a single frame_metadata
+        /// \param[in] frame_metadata  the frame_metadata whose value should be retrieved
+        /// \return            the value of the frame_metadata
         double get_frame_metadata(rs_frame_metadata frame_metadata) const
         {
             rs_error * e = nullptr;
@@ -452,9 +442,9 @@ namespace rs
             return r;
         }
 
-        /// Determines if device allows specific metadata to be queried
-        /// \param[in] frame_metadata  Frame_metadata to check for support
-        /// \return                    true if the frame_metadata can be queried
+        /// determine if the device allows a specific metadata to be queried
+        /// \param[in] frame_metadata  the frame_metadata to check for support
+        /// \return            true if the frame_metadata can be queried
         bool supports_frame_metadata(rs_frame_metadata frame_metadata) const
         {
             rs_error * e = nullptr;
@@ -463,8 +453,8 @@ namespace rs
             return r != 0;
         }
 
-        /// Retrieves frame number
-        /// \return  Frame number
+        // retrieve the frame number
+        // \return            the frame number
         unsigned long long get_frame_number() const
         {
             rs_error * e = nullptr;
@@ -473,8 +463,8 @@ namespace rs
             return r;
         }
 
-        /// Retrieves frame content
-        /// \return   Frame content
+        // retrieve the frame content
+        // \return   frame content
         const void * get_data() const
         {
             rs_error * e = nullptr;
@@ -483,7 +473,7 @@ namespace rs
             return r;
         }
 
-        /// \brief Returns image width in pixels
+        // returns image width in pixels
         int get_width() const
         {
             rs_error * e = nullptr;
@@ -492,7 +482,7 @@ namespace rs
             return r;
         } 
 
-        /// \brief Returns image height in pixels
+        // returns image height in pixels
         int get_height() const
         {
             rs_error * e = nullptr;
@@ -501,7 +491,7 @@ namespace rs
             return r;
         }
 
-        /// \brief Returns configured frame rate
+        // returns the configured framerate
         int get_framerate() const
         {
             rs_error * e = nullptr;
@@ -510,7 +500,7 @@ namespace rs
             return r;
         }
 
-        /// \brief Retrieves frame stride, meaning the actual line width in memory in bytes (not the logical image width)
+        // retrive frame stride, meaning the actual line width in memory in bytes (not the logical image width)
         int get_stride() const
         {
             rs_error * e = nullptr;
@@ -519,8 +509,8 @@ namespace rs
             return r;
         }
 
-        /// \brief Retrieves bits per pixel
-        /// \return            Number of bits per one pixel
+        /// retrieve bits per pixel
+        /// \return            number of bits per one pixel
         int get_bpp() const
         {
             rs_error * e = nullptr;
@@ -529,8 +519,8 @@ namespace rs
             return r;
         }
 
-        /// \brief Retrieves frame format
-        /// \return    Frame format
+        // retrieve the frame format
+        // \return    frame format
         format get_format() const
         {
             rs_error * e = nullptr;
@@ -539,8 +529,8 @@ namespace rs
             return static_cast<format>(r);
         }
 
-        /// \brief Retrieves frame stream type
-        /// \return    Frame stream type
+        // retrieve the frame stream type
+        // \return    frame stream type
         stream get_stream_type() const
         {
             rs_error * e = nullptr;
@@ -563,7 +553,7 @@ namespace rs
 
         void release() override { delete this; }
     };
-    /// \brief Provides convenience methods relating to devices
+
     class device
     {
         device() = delete;
@@ -573,8 +563,8 @@ namespace rs
 
 
     public:
-        /// \brief Retrieves human-readable device model string
-        /// \return  Model string, such as "Intel RealSense F200" or "Intel RealSense R200"
+        /// retrieve a human readable device model string
+        /// \return  the model string, such as "Intel RealSense F200" or "Intel RealSense R200"
         const char * get_name() const
         {
             rs_error * e = nullptr;
@@ -583,8 +573,8 @@ namespace rs
             return r;
         }
 
-        /// \brief Retrieves unique serial number of device
-        /// \return  Serial number, in a format specific to the device model
+        /// retrieve the unique serial number of the device
+        /// \return  the serial number, in a format specific to the device model
         const char * get_serial() const
         {
             rs_error * e = nullptr;
@@ -593,8 +583,8 @@ namespace rs
             return r;
         }
 
-        /// \brief Retrieves USB port number of device
-        /// \return  USB port number, in a format that is specific to device model
+        /// retrieve the USB port number of the device
+        /// \return  the USB port number, in a format specific to the device model
         const char * get_usb_port_id() const
         {
             rs_error * e = nullptr;
@@ -603,8 +593,8 @@ namespace rs
             return r;
         }
 
-        /// \brief Retrieves version of firmware currently installed on device
-        /// \return  Firmware version string, in a format that is specific to device model
+        /// retrieve the version of the firmware currently installed on the device
+        /// \return  firmware version string, in a format is specific to device model
         const char * get_firmware_version() const
         {
             rs_error * e = nullptr;
@@ -613,8 +603,8 @@ namespace rs
             return r;
         }
 
-        /// \brief Retrieves camera-specific information such as versions of various components
-        /// \return  Camera info string, in a format that is specific to device model
+        /// retrieve camera specific information like the versions of the various componnents
+        /// \return  camera info string, in a format specific to the device model
         const char * get_info(camera_info info) const
         {
             rs_error * e = nullptr;
@@ -623,10 +613,10 @@ namespace rs
             return r;
         }
 
-        /// \brief Retrieves extrinsic transformation between viewpoints of two different streams
-        /// \param[in] from_stream  Stream whose coordinate space to transform from
-        /// \param[in] to_stream    Stream whose coordinate space to transform to
-        /// \return                 Transformation between two streams
+        /// retrieve extrinsic transformation between the viewpoints of two different streams
+        /// \param[in] from_stream  stream whose coordinate space we will transform from
+        /// \param[in] to_stream    stream whose coordinate space we will transform to
+        /// \return                 the transformation between the two streams
         extrinsics get_extrinsics(stream from_stream, stream to_stream) const
         {
             rs_error * e = nullptr;
@@ -636,9 +626,9 @@ namespace rs
             return extrin;
         }
 
-        /// \brief Retrieves extrinsic transformation between viewpoints of specific stream and motion module
-        /// \param[in] from_stream  Stream whose coordinate space to transform from
-        /// \return                 Transformation between specific stream and motion module
+        /// retrieve extrinsic transformation between the viewpoints of specific stream and the motion module
+        /// \param[in] from_stream  stream whose coordinate space we will transform from
+        /// \return                 the transformation between the  specific stream and motion module
         extrinsics get_motion_extrinsics_from(stream from_stream) const
         {
             rs_error * e = nullptr;
@@ -648,8 +638,8 @@ namespace rs
             return extrin;
         }
 
-        /// \brief Retrieves mapping between units of depth image and meters
-        /// \return  Depth in meters corresponding to a depth value of 1
+        /// retrieve mapping between the units of the depth image and meters
+        /// \return  depth in meters corresponding to a depth value of 1
         float get_depth_scale() const
         {
             rs_error * e = nullptr;
@@ -658,8 +648,8 @@ namespace rs
             return r;
         }
 
-        /// \brief Determines if device allows specific option to be queried and set
-        /// \param[in] option  Option to check
+        /// determine if the device allows a specific option to be queried and set
+        /// \param[in] option  the option to check for support
         /// \return            true if the option can be queried and set
         bool supports_option(option option) const
         {
@@ -669,9 +659,9 @@ namespace rs
             return r != 0;
         }
 
-        /// \brief Determines number of streaming modes available for given stream
-        /// \param[in] stream  Stream whose modes will be enumerated
-        /// \return            Count of available modes
+        /// determine the number of streaming modes available for a given stream
+        /// \param[in] stream  the stream whose modes will be enumerated
+        /// \return            the count of available modes
         int get_stream_mode_count(stream stream) const
         {
             rs_error * e = nullptr;
@@ -680,13 +670,13 @@ namespace rs
             return r;
         }
 
-        /// \brief Determines properties of specific streaming mode
-        /// \param[in] stream      Stream whose mode will be queried
-        /// \param[in] index       Zero-based index of streaming mode
-        /// \param[out] width      Width of a frame image in pixels
-        /// \param[out] height     Height of a frame image in pixels
-        /// \param[out] format     Pixel format of a frame image
-        /// \param[out] framerate  Number of frames that will be streamed per second
+        /// determine the properties of a specific streaming mode
+        /// \param[in] stream      the stream whose mode will be queried
+        /// \param[in] index       the zero based index of the streaming mode
+        /// \param[out] width      the width of a frame image in pixels
+        /// \param[out] height     the height of a frame image in pixels
+        /// \param[out] format     the pixel format of a frame image
+        /// \param[out] framerate  the number of frames which will be streamed per second
         void get_stream_mode(stream stream, int index, int & width, int & height, format & format, int & framerate) const
         {
             rs_error * e = nullptr;
@@ -694,12 +684,12 @@ namespace rs
             error::handle(e);
         }
 
-        /// \brief Enables specific stream and requests specific properties
-        /// \param[in] stream                   Stream
-        /// \param[in] width                    Desired width of frame image in pixels, or 0 if any width is acceptable
-        /// \param[in] height                   Desired height of frame image in pixels, or 0 if any height is acceptable
-        /// \param[in] format                   Pixel format of frame image, or ANY if any format is acceptable
-        /// \param[in] framerate                Number of frames that will be streamed per second, or 0 if any frame rate is acceptable
+        /// enable a specific stream and request specific properties
+        /// \param[in] stream                   the stream to enable
+        /// \param[in] width                    the desired width of a frame image in pixels, or 0 if any width is acceptable
+        /// \param[in] height                   the desired height of a frame image in pixels, or 0 if any height is acceptable
+        /// \param[in] format                   the pixel format of a frame image, or ANY if any format is acceptable
+        /// \param[in] framerate                the number of frames which will be streamed per second, or 0 if any framerate is acceptable
         /// \param[in] output_buffer_type       output buffer format (continous in memory / native with pitch)
         void enable_stream(stream stream, int width, int height, format format, int framerate, output_buffer_format output_buffer_type = output_buffer_format::continous)
         {
@@ -708,9 +698,9 @@ namespace rs
             error::handle(e);
         }
 
-        /// \brief Enables specific stream and requests properties using preset
-        /// \param[in] stream  Stream to enable
-        /// \param[in] preset  Preset to use to enable the stream
+        /// enable a specific stream and request properties using a preset
+        /// \param[in] stream  the stream to enable
+        /// \param[in] preset  the preset to use to enable the stream
         void enable_stream(stream stream, preset preset)
         {
             rs_error * e = nullptr;
@@ -718,8 +708,8 @@ namespace rs
             error::handle(e);
         }
 
-        /// \brief Disables specific stream
-        /// \param[in] stream  Stream
+        /// disable a specific stream
+        /// \param[in] stream  the stream to disable
         void disable_stream(stream stream)
         {
             rs_error * e = nullptr;
@@ -727,8 +717,8 @@ namespace rs
             error::handle(e);
         }
 
-        /// \brief Determines if specific stream is enabled
-        /// \param[in] stream  Stream to check
+        /// determine if a specific stream is enabled
+        /// \param[in] stream  the stream to check
         /// \return            true if the stream is currently enabled
         bool is_stream_enabled(stream stream) const
         {
@@ -738,9 +728,9 @@ namespace rs
             return r != 0;
         }
 
-        ///  \brief Retrieves width, in pixels, of a specific stream, equivalent to the width field from the stream's intrinsic
-        /// \param[in] stream  Stream 
-        /// \return            Width, in pixels of images from this stream
+        /// retrieve the width in pixels of a specific stream, equivalent to the width field from the stream's intrinsic
+        /// \param[in] stream  the stream whose width to retrieve
+        /// \return            the width in pixels of images from this stream
         int get_stream_width(stream stream) const
         {
             rs_error * e = nullptr;
@@ -749,9 +739,9 @@ namespace rs
             return r;
         }
 
-        /// \brief Retrieves height, in pixels, of a specific stream, equivalent to the height field from the stream's intrinsic
-        /// \param[in] stream  Stream
-        /// \return            Height, in pixels of images from this stream
+        /// retrieve the height in pixels of a specific stream, equivalent to the height field from the stream's intrinsic
+        /// \param[in] stream  the stream whose height to retrieve
+        /// \return            the height in pixels of images from this stream
         int get_stream_height(stream stream) const
         {
             rs_error * e = nullptr;
@@ -760,9 +750,9 @@ namespace rs
             return r;
         }
 
-        /// \brief Retrieves pixel format for specific stream
-        /// \param[in] stream  Stream
-        /// \return            Pixel format of the stream
+        /// retrieve the pixel format for a specific stream
+        /// \param[in] stream  the stream whose format to retrieve
+        /// \return            the pixel format of the stream
         format get_stream_format(stream stream) const
         {
             rs_error * e = nullptr;
@@ -771,9 +761,9 @@ namespace rs
             return (format)r;
         }
 
-        /// \brief Retrieves frame rate for specific stream
-        /// \param[in] stream  Stream
-        /// \return            Frame rate of the stream, in frames per second
+        /// retrieve the framerate for a specific stream
+        /// \param[in] stream  the stream whose framerate to retrieve
+        /// \return            the framerate of the stream, in frames per second
         int get_stream_framerate(stream stream) const
         {
             rs_error * e = nullptr;
@@ -782,9 +772,9 @@ namespace rs
             return r;
         }
 
-        /// \brief Retrieves intrinsic camera parameters for specific stream
-        /// \param[in] stream  Stream
-        /// \return            Intrinsic parameters of the stream
+        /// retrieve intrinsic camera parameters for a specific stream
+        /// \param[in] stream  the stream whose parameters to retrieve
+        /// \return            the intrinsic parameters of the stream
         intrinsics get_stream_intrinsics(stream stream) const
         {
             rs_error * e = nullptr;
@@ -794,8 +784,8 @@ namespace rs
             return intrin;
         }
 
-        /// \brief Retrieves intrinsic camera parameters for motion module
-        /// \return            Intrinsic parameters
+        /// retrieve intrinsic camera parameters for the motion module
+        /// \return            the intrinsic parameters of the stream
         motion_intrinsics get_motion_intrinsics() const
         {
             rs_error * e = nullptr;
@@ -805,15 +795,13 @@ namespace rs
             return intrinsics;
         }
 
-        /// \brief Sets callback for frame arrival event. 
-		/// 
-		/// The provided callback will be called the instant new frame of given stream becomes available
+        /// sets the callback for frame arrival event. provided callback will be called the instant new frame of given stream becomes available
         /// once callback is set on certain stream type, frames of this type will no longer be available throuhg wait/poll methods (those two approaches are mutually exclusive) 
         /// while wait/poll methods provide consistent set of syncronized frames at the expense of extra latency,
         /// set frame callbacks provides low latency solution with no syncronization
-        /// \param[in] stream         Stream 
-        /// \param[in] frame_handler  Frame callback to be invoked on every new frame
-        /// \return                   Frame rate of the stream, in frames per second
+        /// \param[in] stream    the stream 
+        /// \param[in] on_frame  frame callback to be invoke on every new frame
+        /// \return            the framerate of the stream, in frames per second
         void set_frame_callback(rs::stream stream, std::function<void(frame)> frame_handler)
         {
             rs_error * e = nullptr;
@@ -821,23 +809,14 @@ namespace rs
             error::handle(e);
         }
 
-        ///  \brief Sets callback for motion module event. 
-		/// 
-		///  The provided callback will be called the instant new motion or timestamp event is available. 
-        ///  <b>Note</b>: 
-        /// 
-        ///  The \c rs_enable_motion_tracking_cpp() method is responsible for activating the motion module on-board the device. 
-        ///  One of the services it provides is to produce shared and high-resolution timestamps for all components that are connected to it. 
-        ///  For Depth, IR, Color and Fisheye sensors, librealsense takes care of that and copies the timestamps on the relevant frames.
-        ///
-        ///  However, when you have an external device (such as a compass, magnetometer, light sensor, or other) and wish to synchronize it precisely with image and 
-        ///  motion streams, you can connect that sensor to a GPIO that is available on some devices. Every time the sensor signals, you 
-        ///  get a timestamp callback with a frame number, source ID, and a timestamp.
-        ///  This timestamp callback allows advanced users to synchronize compass events (presumably coming though I2C or some other method) with RealSense data.        
-
-        /// \param[in] motion_handler     Frame callback to be invoke on every new motion event
-        /// \param[in] timestamp_handler  Frame callback to be invoke on every new timestamp event (can be left-out)
-        /// \return                       Frame rate of the stream, in frames per second
+        /// sets the callback for motion module event. provided callback will be called the instant new motion or timestamp event is available. 
+        /// Note: rs_enable_motion_tracking  is responsible for activating the motion module on-board the device. One of the services it provides is producing shared and high-resolution timestamps for all component hooked-up to it. Usually, librealsense takes care of that and copies the timestamps to the relevant frames.
+        /// However, when the user has an external device(like a compass) and wishes to synchronize it precisely with image and motion stream he can connect the sensor to a GPIO avaialbe on some devices. Every time sensor will signal, the user will get a timestamp callback with a frame number, source ID and a timestamp.
+        /// This would allow advanced user to synchronize his compass events(presumably coming though I2C or some other method) with realsense data.
+        /// \param[in] stream             the stream 
+        /// \param[in] motion_handler     frame callback to be invoke on every new motion event
+        /// \param[in] timestamp_handler  frame callback to be invoke on every new timestamp event (can be left-out)
+        /// \return                       the framerate of the stream, in frames per second
         void enable_motion_tracking(std::function<void(motion_data)> motion_handler, std::function<void(timestamp_data)> timestamp_handler)
         {
             rs_error * e = nullptr;            
@@ -845,11 +824,10 @@ namespace rs
             error::handle(e);
         }
 
-        /// \brief Sets the callback for motion module event. 
-		///
-		/// The provided callback will be called the instant new motion event is available. 
-        /// \param[in] motion_handler     Frame callback to be invokes on every new motion event
-        /// \return                       Frame rate of the stream, in frames per second
+        /// sets the callback for motion module event. provided callback will be called the instant new motion event is available. 
+        /// \param[in] stream             the stream 
+        /// \param[in] motion_handler     frame callback to be invoke on every new motion event
+        /// \return                       the framerate of the stream, in frames per second
         void enable_motion_tracking(std::function<void(motion_data)> motion_handler)
         {
             rs_error * e = nullptr;            
@@ -857,7 +835,7 @@ namespace rs
             error::handle(e);
         }
 
-        /// \brief Disables events polling
+        /// disable events polling
         void disable_motion_tracking(void)
         {
             rs_error * e = nullptr;
@@ -865,7 +843,7 @@ namespace rs
             error::handle(e);
         }
 
-        /// \brief Checks if data acquisition is active        
+        /// check if data acquisition is active        
         int is_motion_tracking_active()
         {
             rs_error * e = nullptr;
@@ -875,7 +853,7 @@ namespace rs
         }
 
 
-        /// \brief Begins streaming on all enabled streams for this device
+        /// begin streaming on all enabled streams for this device
         void start(rs::source source = rs::source::video)
         {            
             rs_error * e = nullptr;
@@ -883,7 +861,7 @@ namespace rs
             error::handle(e);
         }
 
-        /// \brief Ends streaming on all streams for this device
+        /// end streaming on all streams for this device
         void stop(rs::source source = rs::source::video)
         {
             rs_error * e = nullptr;
@@ -891,8 +869,8 @@ namespace rs
             error::handle(e);
         }
 
-        /// \brief Determines if device is currently streaming
-        /// \return  true if device is currently streaming
+        /// determine if the device is currently streaming
+        /// \return  true if the device is currently streaming
         bool is_streaming() const
         {
             rs_error * e = nullptr;
@@ -901,11 +879,11 @@ namespace rs
             return r != 0;
         }
 
-        /// \brief Retrieves available range of values of supported option
-        /// \param[in] option  Option
-        /// \param[out] min    Minimum value that is acceptable for this option
-        /// \param[out] max    Maximum value that is acceptable for this option
-        /// \param[out] step   Granularity of options that accept discrete values, or zero if the option accepts continuous values        
+        /// retrieve the available range of values of a supported option
+        /// \param[in] option  the option whose range should be queried
+        /// \param[out] min    the minimum value which will be accepted for this option
+        /// \param[out] max    the maximum value which will be accepted for this option
+        /// \param[out] step   the granularity of options which accept discrete values, or zero if the option accepts continuous values
         void get_option_range(option option, double & min, double & max, double & step)
         {
             rs_error * e = nullptr;
@@ -913,12 +891,12 @@ namespace rs
             error::handle(e);
         }
 
-        /// \brief Retrieves available range of values of supported option
-        /// \param[in] option  Option
-        /// \param[out] min    Minimum value that is acceptable for this option
-        /// \param[out] max    Maximum value that is acceptable for this option
-        /// \param[out] step   Granularity of options that accept discrete values, or zero if the option accepts continuous values
-        /// \param[out] def    Default value of the option
+        /// retrieve the available range of values of a supported option
+        /// \param[in] option  the option whose range should be queried
+        /// \param[out] min    the minimum value which will be accepted for this option
+        /// \param[out] max    the maximum value which will be accepted for this option
+        /// \param[out] step   the granularity of options which accept discrete values, or zero if the option accepts continuous values
+        /// \param[out] def    the default value of the option
         void get_option_range(option option, double & min, double & max, double & step, double & def)
         {
             rs_error * e = nullptr;
@@ -926,10 +904,10 @@ namespace rs
             error::handle(e);
         }
 
-        /// \brief Efficiently retrieves value of arbitrary number of options, using minimal hardware IO
-        /// \param[in] options  Array of options that should be queried
-        /// \param[in] count    Length of options and values arrays
-        /// \param[out] values  Array that receives the values of the queried options
+        /// efficiently retrieve the value of an arbitrary number of options, using minimal hardware IO
+        /// \param[in] options  the array of options which should be queried
+        /// \param[in] count    the length of the options and values arrays
+        /// \param[out] values  the array which will receive the values of the queried options
         void get_options(const option * options, size_t count, double * values)
         {
             rs_error * e = nullptr;
@@ -937,10 +915,10 @@ namespace rs
             error::handle(e);
         }
 
-        /// \brief Efficiently sets value of arbitrary number of options, using minimal hardware IO
-        /// \param[in] options  Array of options that should be set
-        /// \param[in] count    Length of options and values arrays
-        /// \param[in] values   Array of values to which the options should be set
+        /// efficiently set the value of an arbitrary number of options, using minimal hardware IO
+        /// \param[in] options  the array of options which should be set
+        /// \param[in] count    the length of the options and values arrays
+        /// \param[in] values   the array of values to which the options should be set
         void set_options(const option * options, size_t count, const double * values)
         {
             rs_error * e = nullptr;
@@ -948,9 +926,9 @@ namespace rs
             error::handle(e);
         }
 
-        /// \brief Retrieves current value of single option
-        /// \param[in] option  Option
-        /// \return            Option value
+        /// retrieve the current value of a single option
+        /// \param[in] option  the option whose value should be retrieved
+        /// \return            the value of the option
         double get_option(option option)
         {
             rs_error * e = nullptr;
@@ -959,9 +937,9 @@ namespace rs
             return r;
         }
         
-        /// \brief Retrieves device-specific option description
-        /// \param[in] option  Option
-        /// \return            Option value
+        /// retrieve the device specific option description
+        /// \param[in] option  the option whose description should be retrieved
+        /// \return            the value of the option
         const char * get_option_description(option option)
         {
             rs_error * e = nullptr;
@@ -970,9 +948,9 @@ namespace rs
             return r;
         }
 
-        /// \brief Sets current value of single option
-        /// \param[in] option  Option
-        /// \param[in] value   Option value
+        /// set the current value of a single option
+        /// \param[in] option  the option whose value should be set
+        /// \param[in] value   the value of the option
         void set_option(option option, double value)
         {
             rs_error * e = nullptr;
@@ -980,7 +958,7 @@ namespace rs
             error::handle(e);
         }
 
-        /// \brief Blocks until new frames are available
+        /// block until new frames are available
         ///
         void wait_for_frames()
         {
@@ -989,8 +967,8 @@ namespace rs
             error::handle(e);
         }
 
-        /// \brief Checks if new frames are available, without blocking
-        /// \return  true if new frames are available; false if no new frames have arrived.
+        /// check if new frames are available, without blocking
+        /// \return  true if new frames are available, false if no new frames have arrived
         bool poll_for_frames()
         {
             rs_error * e = nullptr;
@@ -999,8 +977,8 @@ namespace rs
             return r != 0;
         }
 
-        /// \brief Determines device capabilities
-        /// \param[in] capability  Capability to check
+        /// determine device capabilities
+        /// \param[in] capability  the capability to check for support
         /// \return                true if device has this capability
         bool supports(capabilities capability) const
         {
@@ -1011,8 +989,8 @@ namespace rs
         }
 
 
-        /// \brief Determines device capabilities
-        /// \param[in] info_param  Capability to check for support
+        /// determine device capabilities
+        /// \param[in] capability  the capability to check for support
         /// \return                true if device has this capability
         bool supports(camera_info info_param) const
         {
@@ -1022,9 +1000,9 @@ namespace rs
             return r ? true : false;
         }
 
-        /// \brief Retrieves time at which the latest frame on a stream was captured
-        /// \param[in] stream  Stream of interest
-        /// \return            Timestamp of frame, in milliseconds since the device was started
+        /// retrieve the time at which the latest frame on a stream was captured
+        /// \param[in] stream  the stream whose latest frame we are interested in
+        /// \return            the timestamp of the frame, in milliseconds since the device was started
         double get_frame_timestamp(stream stream) const
         {
             rs_error * e = nullptr;
@@ -1033,9 +1011,9 @@ namespace rs
             return r;
         }
 
-        /// \brief Retrieves frame number
-        /// \param[in] stream  Stream of interest
-        /// \return            Number of frame since device was started
+        /// retrieve the frame number
+        /// \param[in] stream  the stream whose latest frame we are interested in
+        /// \return            the number of the frame, since the device was started
         unsigned long long get_frame_number(stream stream) const
         {
             rs_error * e = nullptr;
@@ -1044,9 +1022,9 @@ namespace rs
             return r;
         }
 
-        /// \brief Retrieves contents of latest frame on a stream
-        /// \param[in] stream  Stream
-        /// \return            Pointer to start of frame data
+        /// retrieve the contents of the latest frame on a stream
+        /// \param[in] stream  the stream whose latest frame we are interested in
+        /// \return            the pointer to the start of the frame data
         const void * get_frame_data(stream stream) const
         {
             rs_error * e = nullptr;
@@ -1055,10 +1033,10 @@ namespace rs
             return r;
         }
 
-        /// \brief Sends device-specific data to device
-        /// \param[in] type  Type of raw data to send to the device
-        /// \param[in] data  Raw data pointer to send
-        /// \param[in] size  Size, in bytes of the raw data to send
+        /// send device specific data to the device
+        /// \param[in] type  describes the content of the memory buffer, how it will be interpreted by the device
+        /// \param[in] data  raw data buffer to be sent to the device
+        /// \param[in] size  size in bytes of the buffer
         void send_blob_to_device(rs::blob_type type, void * data, int size)
         {
             rs_error * e = nullptr;
@@ -1076,7 +1054,7 @@ namespace rs
     inline std::ostream & operator << (std::ostream & o, source src) { return o << rs_source_to_string((rs_source)src); }
     inline std::ostream & operator << (std::ostream & o, event evt) { return o << rs_event_to_string((rs_event_source)evt); }
 
-    /// \brief Severity of the librealsense logger
+    /* Severity of the librealsense logger */
     enum class log_severity : int32_t
     {
         debug = 0, /**< Detailed information about ordinary operations */

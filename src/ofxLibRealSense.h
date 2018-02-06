@@ -29,6 +29,7 @@ public:
     void exit();
     
     void setR200IROptions(bool autoExposure, bool emitter, float gain, float exposure);
+    void setSR300Options(int laserPower);
     
     ofTexture*  getColorTex() { return &_colTex; }
     ofTexture*  getIrTex() { return &_irTex; }
@@ -48,6 +49,7 @@ public:
     int getIrHeight()   { return _irHeight; }
     int getDepthWidth() { return _depthWidth; }
     int getDepthHeight(){ return _depthHeight; }
+    string getDeviceName() { return _device->get_name(); }
     
     
 private:
