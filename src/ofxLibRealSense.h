@@ -8,16 +8,18 @@
 
 #pragma once
 #include "ofMain.h"
+#include "ofxGui.h"
 #include "rs.hpp"
 
 
 class ofxLibRealSense : public ofThread
 {
 public:
+    enum OFX_RSTYPE { RS_R200=0, RS_SR300=1, RS_UNKNOWN=2 };
+    
     static int getDeviceCount();
     
-    ofxLibRealSense() : _hasNewColor(false), _hasNewIr(false), _hasNewDepth(false), _hasNewFrame(false){}
-    
+    ofxLibRealSense() : _hasNewColor(false), _hasNewIr(false), _hasNewDepth(false), _hasNewFrame(false), _deviceType(RS_R200){}
     ~ofxLibRealSense(){}
     
     void setupDevice(int deviceID);
@@ -50,6 +52,14 @@ public:
     int getDepthWidth() { return _depthWidth; }
     int getDepthHeight(){ return _depthHeight; }
     string getDeviceName() { return _device->get_name(); }
+    OFX_RSTYPE getDeviceType() { return _deviceType; }
+    
+    ofxGuiGroup* getRSParamGui() {
+        if(_deviceType == RS_R200)
+            return &_r200Params;
+        else
+            return &_sr300Params;
+    }
     
     
 private:
@@ -63,6 +73,8 @@ private:
     uint8_t         *_irBuff;    
     uint16_t        *_depthBuff;
     
+    OFX_RSTYPE      _deviceType;
+    
     bool            _hasNewFrame;
     bool            _hasNewColor;
     bool            _hasNewIr;
@@ -75,5 +87,16 @@ private:
     ofTexture       _irTex;
     ofTexture       _depthTex;
     
+    ofxGuiGroup     _r200Params;
+    ofxToggle       _autoExposure;
+    ofxToggle       _enableEmitter;
+    ofxFloatSlider  _irGain;
+    ofxFloatSlider  _irExposure;
+    ofxGuiGroup     _sr300Params;
+    ofxIntSlider    _laserPower;
+    
     void threadedFunction();
+    void onR200BoolParamChanged(bool &value);
+    void onR200FloatParamChanged(float &value);
+    void onSR300IntParamChanged(int &value);
 };

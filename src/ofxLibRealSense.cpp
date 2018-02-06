@@ -42,6 +42,27 @@ void ofxLibRealSense::setupDevice(int deviceID)
     
     _device = _ctx->get_device(deviceID);
     cout << _device->get_name() << endl;
+    
+    if((string)(_device->get_name()) == "Intel RealSense R200") {
+        _deviceType = RS_R200;
+        _r200Params.setup("R200");
+        _r200Params.add(_autoExposure.setup("auto exposure", false));
+        _r200Params.add(_enableEmitter.setup("enable emitter", false));
+        _r200Params.add(_irGain.setup("ir gain", 400, 100, 6399));
+        _r200Params.add(_irExposure.setup("exposure", 164, 1, 330));
+        _autoExposure.addListener(this, &ofxLibRealSense::onR200BoolParamChanged);
+        _enableEmitter.addListener(this, &ofxLibRealSense::onR200BoolParamChanged);
+        _irGain.addListener(this, &ofxLibRealSense::onR200FloatParamChanged);
+        _irExposure.addListener(this, &ofxLibRealSense::onR200FloatParamChanged);
+    }
+    else if((string)(_device->get_name()) == "Intel RealSense SR300") {
+        _deviceType = RS_SR300;
+        _sr300Params.setup("SR300");
+        _sr300Params.add(_laserPower.setup("laserPower", 16, 0, 16));
+        _laserPower.addListener(this, &ofxLibRealSense::onSR300IntParamChanged);
+    }
+    else
+        _deviceType = RS_UNKNOWN;
 }
 
 
@@ -179,6 +200,24 @@ void ofxLibRealSense::update()
         _colTex.loadData(_colBuff, _colorWidth, _colorHeight, GL_RGB);
         _hasNewColor = false;
     }
+}
+
+
+void ofxLibRealSense::onR200BoolParamChanged(bool &value)
+{
+    setR200IROptions(_autoExposure, _enableEmitter, _irGain, _irExposure);
+}
+
+
+void ofxLibRealSense::onR200FloatParamChanged(float &value)
+{
+    setR200IROptions(_autoExposure, _enableEmitter, _irGain, _irExposure);
+}
+
+
+void ofxLibRealSense::onSR300IntParamChanged(int &value)
+{
+    setSR300Options(_laserPower);
 }
 
 
